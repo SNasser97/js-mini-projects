@@ -4,7 +4,7 @@
   "description": "Mini js projects",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll *test.js",
+    "test": "jest --watchAll",
     "start": "parcel -p 3000 watch src/index.html --out-dir dev --no-cache",
     "build": "parcel build src/index.html --no-cache"
   },
@@ -16,6 +16,7 @@
     "sass": "1.27.0"
   },
   "dependencies": {
+    "node-fetch": "^2.6.1",
     "parcel-bundler": "^1.12.4"
   }
 }
