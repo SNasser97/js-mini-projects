@@ -1,0 +1,30 @@
+.main-title {
+  margin: 5rem auto;
+  text-align: center;
+}
+
+.sub-title {
+  // font-size: 4rem;
+  font-weight: bold;
+}
+
+.fs {
+  &--xs {
+    font-size: 1.6rem;
+  }
+  &--sm {
+    font-size: 1.8rem;
+  }
+  &--md {
+    font-size: 2.2rem;
+  }
+  &--lg {
+    font-size: 2.8rem;
+  }
+  &--xl {
+    font-size: 3.5rem;
+  }
+  &--xxl {
+    font-size: 4rem;
+  }
+}

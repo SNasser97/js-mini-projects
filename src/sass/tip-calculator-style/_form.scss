@@ -1,0 +1,25 @@
+.tip {
+
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  &__label {
+    padding: 1rem;
+  }
+  &__input {
+
+  }
+  &__select {
+    
+  }
+  &__option {
+
+  }
+  &__btn {
+    padding: 2rem;
+  }
+}

@@ -1,0 +1,18 @@
+
+
+// .project__
+
+.project {
+  background-color: red;
+  padding: 3rem;
+  width: 100%;
+  height: auto;
+  display:grid;
+  grid-template-columns: auto;
+
+  &__wrapper {
+    margin: 1rem;
+    background-color: royalblue;
+    padding: 3rem;
+  }
+}

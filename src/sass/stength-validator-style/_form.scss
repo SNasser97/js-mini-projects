@@ -1,0 +1,63 @@
+
+
+.form__register {
+  width: 55rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid;
+  padding: 2rem;
+  margin: 0 auto; }
+
+.form__fieldset-email, .form__fieldset-password {
+  margin: 1rem;
+  border: 0; }
+
+.form__field-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 50rem;
+  background: #f4f4f4;
+  padding: 4rem; }
+  .form__field-container label {
+    display: flex;
+    margin-bottom: 2rem;
+    flex-direction: column; }
+  .form__field-container input {
+    width: 30rem; }
+
+.btn {
+  padding: 2rem;
+  width: 15rem; }
+  .btn--full {
+    background-color: rebeccapurple;
+    color: #fff;
+    outline: 0;
+    border: 0; }
+
+#email,
+#emailConfirm,
+#password,
+#passwordConfirm {
+  font-size: inherit;
+  border: 0; }
+
+#js-progressbar {
+  transition: .2s all;
+  height: .5rem;
+  border: 0; }
+
+.js-hidden {
+  transition: .2s all;
+  display: none; }
+
+.js-show {
+  transition: .2s all;
+  display: block;
+  background: none; }
+
+.js-low {
+  background-color: #fff; }
