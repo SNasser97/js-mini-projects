@@ -15,7 +15,7 @@
 # production
 /build
 # demo
-/dev
+# /dev
 # misc
 .DS_Store
 .env.local
