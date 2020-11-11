@@ -14,3 +14,16 @@ body {
   font-size: 1.6rem;
   font-family: "Segoe UI Light", Arial, serif, sans-serif; }
 
+.link {
+  &__home {
+    display:flex;
+    justify-content: center;
+    padding: 1rem;
+    background: purple;
+    width: 15rem;
+  }
+}
+
+.center {
+  margin: 0 auto;
+}
