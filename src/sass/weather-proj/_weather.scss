@@ -1,0 +1,74 @@
+.weather {
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background: #f4f4f4;
+  padding: 3rem;  
+  &__search {
+    margin-bottom: 4rem;
+  }
+  &__displayLocations {
+    background: #f4f4f4;
+    height: 80px;
+    width: 400px;
+    border-radius: .5rem;
+  }
+}
+
+.hide-locations {
+  display: none;
+}
+.show-locations {
+  display: block;
+}
+
+.output {
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 50rem;
+  padding: 1rem;
+
+  .card {
+    background: #fff;
+    width: 50rem;
+    border-radius: 2.5rem;
+    padding: 1.5rem;
+    &__header {
+      margin-bottom: 2.5rem;
+      border-bottom: 2px solid #f4f4f4;
+      padding: 1.5rem;
+      background: rgba(208, 137, 255, 0.63);
+      border-radius: inherit;
+    }
+    &__forecast {
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      margin: .5rem 0;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      transition: .2s all;
+      border-bottom: 2px solid #f4f4f4;
+
+      .forecast-date {
+        margin-right: auto;
+      }
+      &:hover {
+        background: #f4f4f4;
+      }
+    }
+    &__image {
+      height: auto;
+      &--sm {
+        width: 8rem;
+      }
+      &--lg {
+        width: 14rem;
+      }
+    }
+  }
+}
