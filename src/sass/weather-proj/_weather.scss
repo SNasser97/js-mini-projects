@@ -9,10 +9,29 @@
     margin-bottom: 4rem;
   }
   &__displayLocations {
-    background: #f4f4f4;
-    height: 80px;
+    background: red;
+    min-height: auto;
+    max-height: 30rem;
+    overflow-y: auto;
     width: 400px;
     border-radius: .5rem;
+    display: block;
+    //! js class
+    .js-locationResult {
+      display:flex;
+      align-items: center;
+      padding: 1.5rem;
+      margin-right: auto;
+      font-weight: bolder;
+      padding-left: 3.5rem;
+      transition: all .2s;
+      &:hover {
+        background-color: rgba(0,0,0,.2);
+      }
+    }
+    .js-locationName {
+      flex-grow: 1;
+    }
   }
 }
 
