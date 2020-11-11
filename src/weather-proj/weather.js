@@ -16,7 +16,7 @@ const getLocation = async (query='london') => {
   // if (!query) query = 'london';
   try {
     console.log('getLoc', query);
-    const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=80cdc2bf3e0b26ecb43d69693f36aa6f&units=metric`
+    const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${KEY_HERE}&units=metric`
     const locationRaw = await fetch(URL);
     const data = await locationRaw.json();
     return data.list;
@@ -37,6 +37,7 @@ const createDOM = (data) => {
   result.classList.add('js-locationResult');
   result.appendChild(loc);
   result.appendChild(temp);
+  result.setAttribute('data-location-id', data.id);
   return result;
 }
 
@@ -50,6 +51,10 @@ const render = async (state) => {
     searchResults.textContent = '';
     await state.locations.forEach(loc => {
       let element = createDOM(loc);
+      element.addEventListener('click', () => {
+        // todo: pass this location id into another call to populate DOM.
+        console.log('loc id', loc.id);
+      })
       searchResults.appendChild(element);
     });
   } catch(e) {
