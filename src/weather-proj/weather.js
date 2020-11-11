@@ -16,7 +16,8 @@ const getLocation = async (query='london') => {
   // if (!query) query = 'london';
   try {
     console.log('getLoc', query);
-    const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${KEY_HERE}&units=metric`
+    console.log('test', process.env);
+    const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${process.env.API_KEY}&units=metric`
     const locationRaw = await fetch(URL);
     const data = await locationRaw.json();
     return data.list;
