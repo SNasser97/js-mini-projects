@@ -27,7 +27,7 @@ const getLocation = async (query = 'london') => {
 
 const createDOMElem = (type, props, text) => {
   let elem = document.createElement(type);
-  console.log(text);
+  // console.log(text);
   Object.keys(props).forEach(prop => {
     elem[prop] = props[prop];
   });
@@ -40,13 +40,12 @@ const createDOMElem = (type, props, text) => {
 }
 
 const createSearchListDOM = async (data) => {
-  // todo: Try and use REST countries API to add corresponding country flag
   const locationElem = (...props) => createDOMElem('p', ...props);
   const tempElem = (...props) => createDOMElem('p', ...props);
   const iconElem = (...props) => createDOMElem('img', ...props);
   const flagElem = (...props) => createDOMElem('img', ...props);
   const result = document.createElement('div')
-  
+
   result.classList.add('js-locationResult');
 
   result.appendChild(locationElem({ className: 'fs--xs' },
@@ -73,9 +72,21 @@ const createSearchListDOM = async (data) => {
   return result;
 }
 
+const createOutputtDOM = async (data) => {
+  
+}
+
+const displayLoader = (parent) => {
+  const loaderContainer= document.createElement('div');
+  const loaderElem = (...props) => createDOMElem('div', ...props);
+  loaderContainer.style.width = '40rem';
+  loaderContainer.appendChild(loaderElem({ className: 'loader' }, null));
+  parent.appendChild(loaderContainer)
+}
+
 const state = {
   searchField: '',
-  locations: [],
+  locations: null,
 }
 
 const getCountryFlag = async (iso) => {
@@ -91,22 +102,20 @@ const getCountryFlag = async (iso) => {
 
 const render = async (state) => {
   try {
+    // display loader while user is typing
+    if (state.locations) {
+      displayLoader(searchResults);
+    }
     state.locations = await getLocation(state.searchField);
-    console.log('curr', state.locations, state.searchField);
-    await state.locations.forEach(async loc => {
+    const list = await state.locations;
+    await list.forEach(async loc => {
       let element = await createSearchListDOM(loc);
       element.addEventListener('click', () => {
         // todo: pass this location id into another call to populate DOM.
         console.log('loc id', loc.id);
-        console.log(loc);
-        console.log(element);
       })
-
       searchResults.appendChild(element);
-      console.log(searchResults.children);
-
     });
-    console.log('cached', cached);
     searchResults.textContent = '';
   } catch {
     searchResults.textContent = '';
@@ -115,7 +124,7 @@ const render = async (state) => {
 
 input.value = '';
 state.searchField = input.value;
-render(state);
+// render(state);
 
 input.addEventListener('input', (e) => {
   state.searchField = e.target.value;
