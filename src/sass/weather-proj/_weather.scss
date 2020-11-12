@@ -13,24 +13,41 @@
     min-height: auto;
     max-height: 30rem;
     overflow-y: auto;
-    width: 400px;
+    width: auto;
     border-radius: .5rem;
     display: block;
+    position: absolute;
     //! js class
     .js-locationResult {
       display:flex;
       align-items: center;
-      padding: 1.5rem;
+      padding: 1rem;
       margin-right: auto;
       font-weight: bolder;
-      padding-left: 3.5rem;
+      padding-left: 1.5rem;
       transition: all .2s;
       &:hover {
         background-color: rgba(0,0,0,.2);
       }
     }
+    .js-locationTemp {
+      width: 8rem;
+    }
+    .js-locationIcon {
+      height: 6rem;
+      width: 6rem;
+      display:inline-block;
+      // margin-right: 2rem;
+    }
     .js-locationName {
       flex-grow: 1;
+      width: 10rem;
+    }
+    .js-locationFlag {
+      height: auto;
+      width: 3rem;
+      display: inline-block;
+      margin-right: 8rem;
     }
   }
 }
