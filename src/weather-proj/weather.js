@@ -47,7 +47,15 @@ const createSearchListDOM = async (data) => {
   const result = document.createElement('div')
 
   result.classList.add('js-locationResult');
-
+  // add event listener to each result, pass data to state.currLocation
+  result.addEventListener('click', () => {
+    // todo: pass this location id into another call to populate DOM.
+    console.log('loc id', data.id);
+    state.currentLocation = data;
+    state.searchField = '';
+    console.log('curr loc st', state);
+    render(state)
+  });
   result.appendChild(locationElem({ className: 'fs--xs' },
     `${data.name}, ${data.sys.country}`)
   );
@@ -86,7 +94,8 @@ const displayLoader = (parent) => {
 
 const state = {
   searchField: '',
-  locations: null,
+  locations: [],
+  currentLocation: null,
 }
 
 const getCountryFlag = async (iso) => {
@@ -107,19 +116,19 @@ const render = async (state) => {
       displayLoader(searchResults);
     }
     state.locations = await getLocation(state.searchField);
-    const list = await state.locations;
-    await list.forEach(async loc => {
-      let element = await createSearchListDOM(loc);
-      element.addEventListener('click', () => {
-        // todo: pass this location id into another call to populate DOM.
-        console.log('loc id', loc.id);
-      })
-      searchResults.appendChild(element);
-    });
+    
+    await displayResults(state);
+    console.log('new state', state);
     searchResults.textContent = '';
   } catch {
     searchResults.textContent = '';
   }
+}
+const displayResults = async (state) => {
+  await state.locations.forEach(async loc => {
+    let element = await createSearchListDOM(loc);
+    searchResults.appendChild(element);
+  });
 }
 
 input.value = '';
@@ -130,6 +139,7 @@ input.addEventListener('input', (e) => {
   state.searchField = e.target.value;
   render(state);
 });
+
 module.exports = {
   getLocation
 }
