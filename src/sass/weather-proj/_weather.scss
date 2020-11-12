@@ -1,33 +1,36 @@
 .weather {
-  display:flex;
+  display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   background: #f4f4f4;
-  padding: 3rem;  
+  padding: 3rem;
   &__search {
     margin-bottom: 4rem;
   }
   &__displayLocations {
-    background: red;
-    min-height: auto;
-    max-height: 30rem;
-    overflow-y: auto;
+    background: #fff;
+    height: auto;
+    // max-height: 30rem;
+    // overflow-y: auto;
     width: auto;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
     display: block;
     position: absolute;
     //! js class
     .js-locationResult {
-      display:flex;
+      display: flex;
       align-items: center;
       padding: 1rem;
       margin-right: auto;
       font-weight: bolder;
       padding-left: 1.5rem;
-      transition: all .2s;
+      transition: all 0.2s;
+      border-bottom: 1px solid #0000000d;
       &:hover {
-        background-color: rgba(0,0,0,.2);
+        background-color: #ffc862a8;
+        transition: all 0.2s;
+        transform: translateY(-4px);
       }
     }
     .js-locationTemp {
@@ -36,7 +39,7 @@
     .js-locationIcon {
       height: 6rem;
       width: 6rem;
-      display:inline-block;
+      display: inline-block;
       // margin-right: 2rem;
     }
     .js-locationName {
@@ -62,7 +65,7 @@
 }
 
 .output {
-  display:flex;
+  display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
@@ -82,14 +85,14 @@
       border-radius: inherit;
     }
     &__forecast {
-      display:flex;
+      display: flex;
       justify-content: center;
       align-items: center;
       background: #fff;
-      margin: .5rem 0;
+      margin: 0.5rem 0;
       padding: 1rem;
       border-radius: 1.5rem;
-      transition: .2s all;
+      transition: 0.2s all;
       border-bottom: 2px solid #f4f4f4;
 
       .forecast-date {
