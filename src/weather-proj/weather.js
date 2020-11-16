@@ -12,17 +12,16 @@ console.log({
   searchResults
 });
 
-const getLocation = async (query = 'london') => {
-  // if (!query) query = 'london';
-  // try {
+const getLocation = async (query) => {
+  try {
   console.log('getLoc', query);
   const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${process.env.API_KEY}&units=metric`
   const locationRaw = await fetch(URL);
   const data = await locationRaw.json();
   return data.list;
-  // } catch (e) {
-  //   console.error('err', e.message);
-  // }
+  } catch (e) {
+    console.error('err', e.message);
+  }
 }
 
 const createDOMElem = (type, props, text) => {
@@ -54,6 +53,7 @@ const createSearchListDOM = async (data) => {
     state.currentLocation = data;
     state.searchField = '';
     console.log('curr loc st', state);
+    input.value = '';
     render(state)
   });
   result.appendChild(locationElem({ className: 'fs--xs' },
@@ -81,7 +81,10 @@ const createSearchListDOM = async (data) => {
 }
 
 const createOutputtDOM = async (data) => {
-  
+  // todo: display html props of current location
+  // todo: fetch currentlocation from state.location
+  // todo: display forecast for current location
+    // todo: api call for forecast + api call for currentLocation
 }
 
 const displayLoader = (parent) => {
