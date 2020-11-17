@@ -62,17 +62,15 @@ const createSearchListDOM = async (data) => {
   result.classList.add('js-locationResult');
   // add event listener to each result, pass data to state.currLocation
   result.addEventListener('click', async (e) => {
-    // todo: pass this location id into another call to populate DOM.
-    // console.log('loc id', data.id);
     let queryID = 0;
     state.currentLocation = await callAPI('get', data.id);
     // if user clicks elements inside result div - get the attr from div else it is the div
     if (e.target.parentElement) {
       queryID = await e.target.parentElement.getAttribute('data-location-id');
-      state.currentForecast = await callAPI('forecast', queryID, 5);
+      state.currentForecast = await callAPI('forecast', queryID, 7);
     }
     queryID = await e.target.getAttribute('data-location-id');
-    state.currentForecast = await callAPI('forecast', queryID, 5);
+    state.currentForecast = await callAPI('forecast', queryID, 7);
 
     state.searchField = '';
     console.log('curr loc st', state.currentLocation);
@@ -80,7 +78,7 @@ const createSearchListDOM = async (data) => {
 
     input.value = '';
     render(state);
-    createOutputDOM(state.currentLocation);
+    createOutputDOM(state.currentLocation, state.currentForecast.list);
   });
   result.appendChild(paraElem({ className: 'fs--xs' },
     `${data.name}, ${data.sys.country}`)
@@ -109,25 +107,29 @@ const createSearchListDOM = async (data) => {
 
 const createForecastDOM = (data) => {
   //* create each element with forecast data.
+  // dt_txt, main.temp, weather.description, weather.icon
   const forecastsOutput = document.createElement('div');
   const forecastDiv = document.createElement('div');
+  // const timeElem = (...props) => createDOMElem('time', ...props);
   const titleElem = (...props) => createDOMElem('h3', ...props);
   const paraElem = (...props) => createDOMElem('p', ...props);
   const imgElem = (...props) => createDOMElem('img', ...props);
   forecastsOutput.classList.add('card__forecasts');
   forecastDiv.classList.add('card__forecast');
+  // forecastDiv.appendChild(timeElem({ className: 'fs--sm forecast-date' }, ));
 
-  forecastDiv.appendChild(paraElem({ className: 'sub-title fs--md' }, '11 temp here'));
-  forecastDiv.appendChild(imgElem({ className: 'card__image--sm', src: `https://openweathermap.org/img/wn/10d@2x.png`, alt: 'altname' }, 'temp here'));
-  forecastDiv.appendChild(paraElem({ className: 'fs--sm' }, 'Weather, Description'))
+  forecastDiv.appendChild(paraElem({ className: 'sub-title fs--md' }, Math.ceil(data.main.temp) + '° C'));
+  forecastDiv.appendChild(imgElem({ className: 'card__image--sm', src: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, alt: 'altname' }, 'temp here'));
+  forecastDiv.appendChild(paraElem({ className: 'fs--sm' }, data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)))
 
-  forecastsOutput.appendChild(titleElem({ className: 'sub-title fs--md' }, 'Forecasts'));
+  forecastsOutput.appendChild(titleElem({ className: 'sub-title fs--md' }, new Date(data.dt_txt).toUTCString()));
   forecastsOutput.appendChild(forecastDiv);
 
   return forecastsOutput;
 }
 
-const createOutputDOM = async (data) => {
+const createOutputDOM = async (data, list = null) => {
+  const children = list;
   const container = document.createElement('div');
   const headerEl = document.createElement('div');
   const paraElem = (...props) => createDOMElem('p', ...props);
@@ -163,14 +165,10 @@ const createOutputDOM = async (data) => {
     paraElem({ className: 'fs--md' }, data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)),
   ];
 
-
   nodeList.forEach(el => headerEl.appendChild(el));
   container.appendChild(headerEl);
-  container.appendChild(createForecastDOM(data));
+  children.forEach(el => container.appendChild(createForecastDOM(el)));
   output.appendChild(container);
-  // todo: fetch currentlocation from state.location
-  // todo: display forecast for current location
-  // todo: api call for forecast + api call for currentLocation
 }
 
 const displayLoader = (parent) => {
