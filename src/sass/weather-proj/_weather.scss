@@ -81,14 +81,14 @@
       margin-bottom: 2.5rem;
       border-bottom: 2px solid #f4f4f4;
       padding: 1.5rem;
-      background: rgba(208, 137, 255, 0.63);
+      background: #d089ffa1;
       border-radius: inherit;
     }
     &__forecast {
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #fff;
+      background: #f4f4f4;
       margin: 0.5rem 0;
       padding: 1rem;
       border-radius: 1.5rem;
@@ -99,7 +99,7 @@
         margin-right: auto;
       }
       &:hover {
-        background: #f4f4f4;
+        background: #d089ffa1;
       }
     }
     &__image {
