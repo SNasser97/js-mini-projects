@@ -61,21 +61,10 @@ const createSearchListDOM = async (data) => {
 
   result.classList.add('js-locationResult');
   // add event listener to each result, pass data to state.currLocation
-  result.addEventListener('click', async (e) => {
-    let queryID = 0;
+  result.addEventListener('click', async () => {
     state.currentLocation = await callAPI('get', data.id);
-    // if user clicks elements inside result div - get the attr from div else it is the div
-    if (e.target.parentElement) {
-      queryID = await e.target.parentElement.getAttribute('data-location-id');
-      state.currentForecast = await callAPI('forecast', queryID, 7);
-    }
-    queryID = await e.target.getAttribute('data-location-id');
-    state.currentForecast = await callAPI('forecast', queryID, 7);
-
+    state.currentForecast = await callAPI('forecast', data.id, 7);
     state.searchField = '';
-    console.log('curr loc st', state.currentLocation);
-    console.log('curr forcast', state.currentForecast);
-
     input.value = '';
     render(state);
     createOutputDOM(state.currentLocation, state.currentForecast.list);
