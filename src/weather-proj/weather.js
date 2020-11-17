@@ -211,7 +211,7 @@ const displayResults = async (state) => {
 
 input.value = '';
 state.searchField = input.value;
-// render(state);
+render(state);
 
 input.addEventListener('input', (e) => {
   state.searchField = e.target.value;
