@@ -5,41 +5,43 @@ import 'regenerator-runtime/runtime';
 
 const input = document.querySelector('#js-search');
 const searchResults = document.querySelector('.weather__displayLocations');
-// console.log({
-//   input,
-//   output,
-//   searchResults
-// });
+const output = document.querySelector('.output');
 
-const getLocation = async (query) => {
+const callAPI = async (request, ...query) => {
   try {
-    console.log('getLoc', query);
-    const URL = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${process.env.API_KEY}&units=metric`
-    const locationRaw = await fetch(URL);
-    const data = await locationRaw.json();
-    return data.list;
-  } catch (e) {
-    console.error('err', e.message);
+    let url = '';
+    switch (request.toLowerCase()) {
+      case 'search':
+        url = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${process.env.API_KEY}&units=metric`;
+        break;
+      case 'get':
+        url = `https://api.openweathermap.org/data/2.5/weather?id=${query}&appid=${process.env.API_KEY}&units=metric`;
+        break;
+      case 'forecast':
+        url = `https://api.openweathermap.org/data/2.5/forecast?id=${query[0]}&cnt=${query[1]}&appid=${process.env.API_KEY}&units=metric`;
+        break;
+      case 'flag':
+        url = `https://restcountries.eu/rest/v2/alpha/${query}`;
+        break;
+      default:
+        url;
+        console.log('did not specify request');
+    }
+    const response = await fetch(url);
+    const data = await response.json();
+    if (request.toLowerCase() === 'search') {
+      return data.list;
+    } else if (request.toLowerCase() === 'flag') {
+      return data.flag;
+    }
+    return data;
+  } catch {
+    console.log('err');
   }
 }
 
-const getCurrentLocation = async (query) => {
-  console.log('id in cuirr', query);
-  const URL = `https://api.openweathermap.org/data/2.5/weather?id=${query}&appid=${process.env.API_KEY}&units=metric`;
-  const currLocRaw = await fetch(URL);
-  const data = await currLocRaw.json();
-  return data;
-}
-
-const getCurrForecasts = async (query, numOfDays) => {
-  const URL = `https://api.openweathermap.org/data/2.5/forecast?daily=${query}&cnt=${numOfDays}&appid=${process.env.API_KEY}&units=metric`;
-  const currLocRaw = await fetch(URL);
-  const data = await currLocRaw.json();
-  return data;
-}
-
 const createDOMElem = (type, props, text = null) => {
-  let elem = document.createElement(type);
+  const elem = document.createElement(type);
   // console.log(text);
   Object.keys(props).forEach(prop => {
     elem[prop] = props[prop];
@@ -53,72 +55,96 @@ const createDOMElem = (type, props, text = null) => {
 }
 
 const createSearchListDOM = async (data) => {
-  const locationElem = (...props) => createDOMElem('p', ...props);
-  const tempElem = (...props) => createDOMElem('p', ...props);
-  const iconElem = (...props) => createDOMElem('img', ...props);
-  const flagElem = (...props) => createDOMElem('img', ...props);
-  const result = document.createElement('div')
+  const paraElem = (...props) => createDOMElem('p', ...props);
+  const imgElem = (...props) => createDOMElem('img', ...props);
+  const result = document.createElement('div');
 
   result.classList.add('js-locationResult');
   // add event listener to each result, pass data to state.currLocation
-  result.addEventListener('click', async () => {
+  result.addEventListener('click', async (e) => {
     // todo: pass this location id into another call to populate DOM.
-    console.log('loc id', data.id);
-    state.currentLocation = await getCurrentLocation(data.id);
+    // console.log('loc id', data.id);
+    let queryID = 0;
+    state.currentLocation = await callAPI('get', data.id);
+    // if user clicks elements inside result div - get the attr from div else it is the div
+    if (e.target.parentElement) {
+      queryID = await e.target.parentElement.getAttribute('data-location-id');
+      state.currentForecast = await callAPI('forecast', queryID, 5);
+    }
+    queryID = await e.target.getAttribute('data-location-id');
+    state.currentForecast = await callAPI('forecast', queryID, 5);
+
     state.searchField = '';
-    console.log('curr loc st', state);
+    console.log('curr loc st', state.currentLocation);
+    console.log('curr forcast', state.currentForecast);
+
     input.value = '';
     render(state);
     createOutputDOM(state.currentLocation);
   });
-  result.appendChild(locationElem({ className: 'fs--xs' },
+  result.appendChild(paraElem({ className: 'fs--xs' },
     `${data.name}, ${data.sys.country}`)
   );
   // result.appendChild(flag);
-  result.appendChild(flagElem({
+  result.appendChild(imgElem({
     className: 'js-locationFlag',
-    src: await getCountryFlag(data.sys.country),
+    src: await callAPI('flag', data.sys.country),
     alt: data.name,
   }, null));
 
-  result.appendChild(iconElem({
+  result.appendChild(imgElem({
     className: 'js-locationIcon',
     src: `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
     alt: `${data.weather[0].main}, ${data.weather[0].description}`
   }, null));
 
-  result.appendChild(tempElem(
+  result.appendChild(paraElem(
     { className: 'fs--lg js-locationTemp' },
     Math.ceil(data.main.temp) + '° C'
   ));
   result.setAttribute('data-location-id', data.id);
+
   return result;
 }
-const output = document.querySelector('.output');
 
-const createForecastDOM = async (data) => {
-  
+const createForecastDOM = (data) => {
+  //* create each element with forecast data.
+  const forecastsOutput = document.createElement('div');
+  const forecastDiv = document.createElement('div');
+  const titleElem = (...props) => createDOMElem('h3', ...props);
+  const paraElem = (...props) => createDOMElem('p', ...props);
+  const imgElem = (...props) => createDOMElem('img', ...props);
+  forecastsOutput.classList.add('card__forecasts');
+  forecastDiv.classList.add('card__forecast');
+
+  forecastDiv.appendChild(paraElem({ className: 'sub-title fs--md' }, '11 temp here'));
+  forecastDiv.appendChild(imgElem({ className: 'card__image--sm', src: `https://openweathermap.org/img/wn/10d@2x.png`, alt: 'altname' }, 'temp here'));
+  forecastDiv.appendChild(paraElem({ className: 'fs--sm' }, 'Weather, Description'))
+
+  forecastsOutput.appendChild(titleElem({ className: 'sub-title fs--md' }, 'Forecasts'));
+  forecastsOutput.appendChild(forecastDiv);
+
+  return forecastsOutput;
 }
 
 const createOutputDOM = async (data) => {
-  // todo: display html props of current location
+  const container = document.createElement('div');
   const headerEl = document.createElement('div');
+  const paraElem = (...props) => createDOMElem('p', ...props);
+  const imgElem = (...props) => createDOMElem('img', ...props);
+  const locationParent = paraElem({ className: 'sub-title fs--lg' }, `${data.name}, ${data.sys.country}`)
   // const dateEl = (...props) => createDOMElem('time', ...props);
-  const locationEl = (...props) => createDOMElem('p', ...props);
-  const imgEl = (...props) => createDOMElem('img', ...props);
-  const tempEl = (...props) => createDOMElem('p', ...props);
-  const weatherDescEl = (...props) => createDOMElem('p', ...props);
-  const flagElem = (...props) => createDOMElem('img', ...props);
-  headerEl.setAttribute('class', 'card card__weather');
-  const locationParent = locationEl({ className: 'sub-title fs--lg' }, data.name + ', ' + data.sys.country)
+  headerEl.setAttribute('class', 'card__header');
+  container.setAttribute('class', 'card card__weather');
   //* timestamp conversion 
-  // const unixEpochTimeMS = data.dt * 1_000;
+  // const timestamp = dayjs.unix(data.dt-data.timezone);
+
   // const d = new Date(unixEpochTimeMS);
   // const strDate = d.toLocaleTimeString();
-  
-  locationParent.appendChild(flagElem({
+
+  locationParent.appendChild(imgElem({
     className: 'js-locationFlag',
-    src: await getCountryFlag(data.sys.country),
+    src: await callAPI('flag', data.sys.country),
     alt: data.name,
     height: '20',
     width: '40',
@@ -126,20 +152,22 @@ const createOutputDOM = async (data) => {
   }, null));
 
   const nodeList = [
-    // dateEl({ className: 'fs--sm' }, strDate),
+    // dateEl({ className: 'fs--sm' }, timestamp),
     locationParent,
-    imgEl({
+    imgElem({
       className: 'card__image--lg',
       src: `http://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`,
       alt: `${data.weather[0].main}, ${data.weather[0].description}`
     }),
-    tempEl({ className: 'fs--xl' }, Math.ceil(data.main.temp) + '° C'),
-    weatherDescEl({ className: 'fs--md' }, data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)),
+    paraElem({ className: 'fs--xl' }, Math.ceil(data.main.temp) + '° C'),
+    paraElem({ className: 'fs--md' }, data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)),
   ];
 
-  
+
   nodeList.forEach(el => headerEl.appendChild(el));
-  output.appendChild(headerEl);
+  container.appendChild(headerEl);
+  container.appendChild(createForecastDOM(data));
+  output.appendChild(container);
   // todo: fetch currentlocation from state.location
   // todo: display forecast for current location
   // todo: api call for forecast + api call for currentLocation
@@ -157,18 +185,7 @@ const state = {
   searchField: '',
   locations: [],
   currentLocation: null,
-  currForecast: null,
-}
-
-const getCountryFlag = async (iso) => {
-  try {
-    const countryRaw = await fetch(`https://restcountries.eu/rest/v2/alpha/${iso}`)
-    const data = await countryRaw.json();
-    const flagURL = await data.flag;
-    return flagURL;
-  } catch (e) {
-    console.warn('could not get flag', e.message);
-  }
+  currentForecast: null,
 }
 
 const render = async (state) => {
@@ -177,7 +194,7 @@ const render = async (state) => {
     if (state.locations) {
       displayLoader(searchResults);
     }
-    state.locations = await getLocation(state.searchField);
+    state.locations = await callAPI('search', state.searchField);
 
     await displayResults(state);
     console.log('new state', state);
@@ -204,5 +221,5 @@ input.addEventListener('input', (e) => {
 });
 
 module.exports = {
-  getLocation
+  // getLocation
 }
