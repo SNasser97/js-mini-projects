@@ -62,12 +62,16 @@ const createSearchListDOM = async (data) => {
   result.classList.add('js-locationResult');
   // add event listener to each result, pass data to state.currLocation
   result.addEventListener('click', async () => {
-    state.currentLocation = await callAPI('get', data.id);
-    state.currentForecast = await callAPI('forecast', data.id, 7);
     state.searchField = '';
     input.value = '';
-    render(state);
+    state.currentLocation = await callAPI('get', data.id);
+    state.currentForecast = await callAPI('forecast', data.id, 7);
+    // prevent appending more than one weather from result at a time.
+    if (output.children !== undefined) {
+      output.textContent = '';
+    }
     createOutputDOM(state.currentLocation, state.currentForecast.list);
+    render(state);
   });
   result.appendChild(paraElem({ className: 'fs--xs' },
     `${data.name}, ${data.sys.country}`)
@@ -96,13 +100,13 @@ const createSearchListDOM = async (data) => {
 
 const createForecastDOM = (data) => {
   //* create each element with forecast data.
-  const divElem = (...props) => createDOMElem('div',...props);
+  const divElem = (...props) => createDOMElem('div', ...props);
   // const timeElem = (...props) => createDOMElem('time', ...props);
   const titleElem = (...props) => createDOMElem('h3', ...props);
   const paraElem = (...props) => createDOMElem('p', ...props);
   const imgElem = (...props) => createDOMElem('img', ...props);
   const forecastsOutput = divElem({ className: 'card__forecasts' });
-  const forecastDiv = divElem({className:'card__forecast'});
+  const forecastDiv = divElem({ className: 'card__forecast' });
 
   // forecastDiv.appendChild(timeElem({ className: 'fs--sm forecast-date' }, ));
   forecastDiv.appendChild(paraElem({ className: 'sub-title fs--md' }, Math.ceil(data.main.temp) + '° C'));
@@ -120,8 +124,8 @@ const createOutputDOM = async (data, list = null) => {
   const paraElem = (...props) => createDOMElem('p', ...props);
   const imgElem = (...props) => createDOMElem('img', ...props);
   const locationParent = paraElem({ className: 'sub-title fs--lg' }, `${data.name}, ${data.sys.country}`);
-  const container = divElem({className:'card card__weather'});
-  const headerEl = divElem({className: 'card__header'});
+  const container = divElem({ className: 'card card__weather' });
+  const headerEl = divElem({ className: 'card__header' });
   const children = list;
 
   // const dateEl = (...props) => createDOMElem('time', ...props);
@@ -162,8 +166,8 @@ const createOutputDOM = async (data, list = null) => {
 
 const displayLoader = (parent) => {
   const divElem = (...props) => createDOMElem('div', ...props);
-  const loader = divElem({className:'loader'});
-  const loaderContainer = divElem({style:'width:40rem'});
+  const loader = divElem({ className: 'loader' });
+  const loaderContainer = divElem({ style: 'width:40rem' });
   loaderContainer.appendChild(loader);
   parent.appendChild(loaderContainer);
 }
@@ -186,7 +190,7 @@ const render = async (state) => {
     await displayResults(state);
     console.log('new state', state);
     searchResults.textContent = '';
-    output.textContent = '';
+    // output.textContent = '';
   } catch {
     searchResults.textContent = '';
   }
