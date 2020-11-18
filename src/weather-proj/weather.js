@@ -96,17 +96,15 @@ const createSearchListDOM = async (data) => {
 
 const createForecastDOM = (data) => {
   //* create each element with forecast data.
-  // dt_txt, main.temp, weather.description, weather.icon
-  const forecastsOutput = document.createElement('div');
-  const forecastDiv = document.createElement('div');
+  const divElem = (...props) => createDOMElem('div',...props);
   // const timeElem = (...props) => createDOMElem('time', ...props);
   const titleElem = (...props) => createDOMElem('h3', ...props);
   const paraElem = (...props) => createDOMElem('p', ...props);
   const imgElem = (...props) => createDOMElem('img', ...props);
-  forecastsOutput.classList.add('card__forecasts');
-  forecastDiv.classList.add('card__forecast');
-  // forecastDiv.appendChild(timeElem({ className: 'fs--sm forecast-date' }, ));
+  const forecastsOutput = divElem({ className: 'card__forecasts' });
+  const forecastDiv = divElem({className:'card__forecast'});
 
+  // forecastDiv.appendChild(timeElem({ className: 'fs--sm forecast-date' }, ));
   forecastDiv.appendChild(paraElem({ className: 'sub-title fs--md' }, Math.ceil(data.main.temp) + '° C'));
   forecastDiv.appendChild(imgElem({ className: 'card__image--sm', src: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, alt: 'altname' }, 'temp here'));
   forecastDiv.appendChild(paraElem({ className: 'fs--sm' }, data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)))
@@ -118,12 +116,14 @@ const createForecastDOM = (data) => {
 }
 
 const createOutputDOM = async (data, list = null) => {
-  const children = list;
-  const container = document.createElement('div');
-  const headerEl = document.createElement('div');
+  const divElem = (...props) => createDOMElem('div', ...props);
   const paraElem = (...props) => createDOMElem('p', ...props);
   const imgElem = (...props) => createDOMElem('img', ...props);
-  const locationParent = paraElem({ className: 'sub-title fs--lg' }, `${data.name}, ${data.sys.country}`)
+  const locationParent = paraElem({ className: 'sub-title fs--lg' }, `${data.name}, ${data.sys.country}`);
+  const container = divElem({className:'card card__weather'});
+  const headerEl = divElem({className: 'card__header'});
+  const children = list;
+
   // const dateEl = (...props) => createDOMElem('time', ...props);
   headerEl.setAttribute('class', 'card__header');
   container.setAttribute('class', 'card card__weather');
@@ -161,10 +161,10 @@ const createOutputDOM = async (data, list = null) => {
 }
 
 const displayLoader = (parent) => {
-  const loaderContainer = document.createElement('div');
-  const loaderElem = (...props) => createDOMElem('div', ...props);
-  loaderContainer.style.width = '40rem';
-  loaderContainer.appendChild(loaderElem({ className: 'loader' }, null));
+  const divElem = (...props) => createDOMElem('div', ...props);
+  const loader = divElem({className:'loader'});
+  const loaderContainer = divElem({style:'width:40rem'});
+  loaderContainer.appendChild(loader);
   parent.appendChild(loaderContainer);
 }
 
@@ -191,11 +191,16 @@ const render = async (state) => {
     searchResults.textContent = '';
   }
 }
+
 const displayResults = async (state) => {
-  await state.locations.forEach(async loc => {
-    let element = await createSearchListDOM(loc);
-    searchResults.appendChild(element);
-  });
+  try {
+    await state.locations.forEach(async loc => {
+      let element = await createSearchListDOM(loc);
+      searchResults.appendChild(element);
+    });
+  } catch {
+    console.warn('Could not display results');
+  }
 }
 
 input.value = '';
